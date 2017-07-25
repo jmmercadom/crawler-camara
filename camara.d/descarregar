@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+use 'descarregar'
+
+SUBCOMMAND_DESC="Descarregar html da camera de deputados"
+SUBCOMMAND_HELP=$(cat <<EOH
+remuneracoes_deputados_ano        Descarregar remunerações deputados por ano
+EOH
+)
+
+case ${1} in
+  remuneracoes_deputados_ano)
+    ano=${2}
+
+    if [[ -z ${ano} ]]; then
+      in_red ">"; echo "ano não especificado"
+      bold "Uso:"; echo "     ${MAIN_COMMAND} ${SUBCOMMAND} ${1} <ano>"
+      bold "Exemplo:"; echo " ${MAIN_COMMAND} ${SUBCOMMAND} ${1} 2017"
+      bold "$(smul Parametros)"; echo
+      bold "ano:"; echo "     ano no formato YYYY"
+      exit
+    fi
+
+    remuneracoes_deputados_ano
+  ;;
+esac
