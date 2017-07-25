@@ -1,5 +1,33 @@
 #!/usr/bin/env bash
 
-function remuneracoes_deputados_ano() {
+function remuneracoes_deputados() {
+  local ano=${1}
+  local mes=${2}
+  log "[remuneracoes_deputados]: parametros [ano=${ano}] [mes=${mes}]"
+  export meses
+
+  if [[ -z ${mes} ]]; then
+    meses=`seq 12`
+  else
+    meses=`seq ${mes} ${mes}`
+  fi
+
+  for mes in ${meses}
+  do
+    nomes_deputados ${ano} | parallel remuneracoes_deputado ${ano} ${mes} "{}"
+  done
+}
+
+function nomes_deputados() {
+  local ano=${1}
+  log "[nomes_deputados]: parametros [ano=${ano}]"
+  true;
+}
+
+function remuneracoes_deputado() {
+  local ano=${1}
+  local mes=${2}
+  local nome=${3}
+  log "[remuneracoes_deputado]: parametros [ano=${ano}] [mes=${mes}] [nome=${nome}]"
   true;
 }
