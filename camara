@@ -12,6 +12,9 @@ function in_yellow()  { _color 3 "${1}"; } # use for warnings / attention
 function in_magenta() { _color 5 "${1}"; } # use for debug messages
 function in_cyan()    { _color 6 "${1}"; } # use for main actions / progress
 
+function bold()       { tput -Txterm bold; echo -ne ${1}; tput -Txterm sgr0; }
+function smul()       { tput -Txterm smul; echo -ne ${1}; tput -Txterm sgr0; }
+
 function log() {
   if [[ -n ${DEBUG} ]]; then
     tput -Txterm setaf 5 >&2
