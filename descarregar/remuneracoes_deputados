@@ -16,5 +16,5 @@ fi
 
 for mes in ${meses}
 do
-  obter/nomes_deputados ${ano} | parallel ./descarregar/remuneracoes_deputado ${ano} ${mes} "{}"
+  obter/nomes_deputados ${ano} | parallel ./descarregar/remuneracoes_funcionario ${ano} ${mes} "{}"
 done

@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-source camara.d/utils
-
-ano=${1}
-mes=${2}
-nome=${3}
-
-log "${0}: parametros [ano=${ano}] [mes=${mes}] [nome=${nome}]"

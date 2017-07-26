@@ -2,7 +2,8 @@
 
 SUBCOMMAND_DESC="Descarregar html da camera de deputados"
 SUBCOMMAND_HELP=$(cat <<EOH
-remuneracoes_deputados        Descarregar remunerações deputados
+remuneracoes_deputados        Descarregar remunerações de todos os deputados
+remuneracoes_fucionario       Descarregar remunerações de um funcionario especifico
 EOH
 )
 
@@ -23,5 +24,24 @@ case ${1} in
     fi
 
     descarregar/remuneracoes_deputados ${ano} ${mes}
+  ;;
+
+  remuneracoes_funcionario)
+    ano="${2}"
+    mes="${3}"
+    nome="${4}"
+
+    if [[ -z ${ano} ]] || [[ -z ${mes} ]] || [[ -z ${nome} ]]; then
+      in_red ">"; echo "ano, mes ou nome não especificados"
+      bold "Uso:"; echo "     ${MAIN_COMMAND} ${SUBCOMMAND} ${1} <ano> <mes> <nome>"
+      bold "Exemplo:"; echo " ${MAIN_COMMAND} ${SUBCOMMAND} ${1} 2000 12 \"ZE CARIOCA\""
+      bold "$(smul Parametros)"; echo
+      bold "ano:"; echo "     ano no formato YYYY"
+      bold "mes:"; echo "     mes no formato MM"
+      bold "nome:"; echo "    nome completo do funcionario, cercado de aspas duplas."
+      exit
+    fi
+
+    descarregar/remuneracoes_funcionario ${ano} ${mes} ${nome}
   ;;
 esac

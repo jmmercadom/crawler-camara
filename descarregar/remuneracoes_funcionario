@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+# Descarregar as remuneracoes de um funcionario para um certo periodo.
+# Os arquivos HTML descarregados seram armazenados na pasta '/html'.
+# A jerarquia das pastas criadas são: /html/ANO/MES/NOME_NUM.html
+# Onde ANO, MES, NOME são os parametros de entrada.
+# NUM é o numero de resultado de pesquisa, podem aparecer multiplas
+# remunerações para uma pessoa num periodo especifico.
+#
+# Entrada:
+# - ano: Ano pra presquisa, no formato YYYY.
+# - mes: Mes pra presquisa, no formato MM.
+# - nome: Nome completo do funcionario, cercado de aspas duplas.
+#
+# Saída:
+# Nenhuma
+
+source camara.d/utils
+
+ano=${1}
+mes=${2}
+nome=${3}
+
+log "${0}: parametros [ano=${ano}] [mes=${mes}] [nome=${nome}]"
+
+log "${0}: convertindo mes para o formato MM"
+printf -v mes "%02d" ${mes}
+log "${0}: mes=${mes}"
+
+log "${0}: chamando script para resultados da busca"
+resultados=$(deputados/resultados_busca.sh ${ano}${mes} "${nome}")
+
+log "${0}: extraindo enlaces de remunerações dos resultados da busca"
+enlaces=($(echo ${resultados} | deputados/enlaces_remuneracoes.py))
+log "${0}: enlaces extraidos: ${enlaces}"
+
+rota="/dados/html/${ano}/${mes}"
+log "${0}: criando jerarquia de pastas ${rota}"
+mkdir -p ${rota}
+
+num=0
+for enlace in "${enlaces[@]}"
+do
+  log "${0}: descarregar remuneração ${num} para '${nome}' periodo ${ano}/${mes}"
+  curl
+    --fail \
+    --silent \
+    --output ${rota}/"${nome}"_${num}.html \
+    "${enlace}"
+  ((num++))
+done
