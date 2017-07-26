@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+set -e
+
+source camara.d/utils
+
+ano=${1}
+
+log "${0}: parametros [ano=${ano}]"
+
+path=/dados/legislaturas
+file=${ano}.json
+file_path=${path}/${file}
+
+log "${0}: detectar se aquivo existe file_path=${file_path}]"
+if [ ! -f  ${file_path} ]; then
+  log "${0}: file_path não foi encontrado"
+  log "${0}: descarregando legislatura para o ano ${ano}"
+  descarregar/legislatura ${ano}
+else
+  log "${0}: file_path foi encontrado"
+fi
+
+log "${0}: retornando legislatura id para o ano ${ano}"
+cat ${file_path} | jq '.dados[0].id'

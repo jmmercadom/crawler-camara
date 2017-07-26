@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+source camara.d/utils
+
+ano=${1}
+
+log "${0}: parametros [ano=${ano}]"
+
+path=/dados/deputados/nomes
+log "${0}: Criar folder ${path}/${ano}"
+mkdir -p ${path}/${ano}
+
+log "${0}: Eliminar arquivos json do ano ${ano} no folder ${path}/${ano}"
+rm -rf ${path:?}/${ano}/*.json
+
+export legislatura
+legislatura=$(obter/legislatura ${ano})
+[ $? -ne 0 ] && error "${0}: Erro ao obter legislatura correspondente ao ano ${ano}"
+log "${0}: [legislatura=${legislatura}]"
+
+endpoint="https://dadosabertos.camara.leg.br/api/v2/deputados"
+headers="accept: application/json"
+
+for pagina in {1..10}; do
+  params="idLegislatura=${legislatura}&itens=100&ordem=ASC&ordenarPor=nome&pagina=${pagina}"
+  url="${endpoint}?${params}"
+  file=${pagina}.json
+  file_path=${path}/${ano}/${file}
+  log "${0}: descarregar informação deputados da camara [url=${url}] [headers=${headers}] [file_path=${file_path}]"
+  curl --silent --fail ${url} --header "${headers}" | jq '.' > ${file_path}
+  log "${0}: verificar se é a ultima pagina"
+  if [ "$(cat ${file_path} | jq '.links | map(select(.rel=="next"))')" == "[]" ]; then
+    log "${0}: ultima pagina da informação de deputados encontrada"
+    break
+  fi
+  log "${0}: coletando nomes de deputados do ano ${ano} dos archivos json"
+  find ${path}/${ano}/*.json -print0 | xargs -I {} cat {} | jq '.dados[].nome' > ${path}/${ano}.txt
+done

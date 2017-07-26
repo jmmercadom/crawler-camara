@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+function _color()     { tput -Txterm setaf ${1}; echo -ne ${2}; tput -Txterm sgr0; }
+function in_red()     { _color 1 "${1}"; } # use for failures
+function in_green()   { _color 2 "${1}"; } # use for successes
+function in_yellow()  { _color 3 "${1}"; } # use for warnings / attention
+function in_magenta() { _color 5 "${1}"; } # use for debug messages
+function in_cyan()    { _color 6 "${1}"; } # use for main actions / progress
+
+function bold()       { tput -Txterm bold; echo -ne ${1}; tput -Txterm sgr0; }
+function smul()       { tput -Txterm smul; echo -ne ${1}; tput -Txterm sgr0; }
+
+function log() {
+  if [[ -n ${CAMARA_DEBUG} ]]; then
+    tput -Txterm setaf 5 >&2
+    echo -e "debug: ${*}" >&2
+    tput -Txterm sgr0 >&2
+  fi
+}
+
+function error() {
+  in_red "ERROR: ${1}"
+  exit 1
+}
+
+function warn() {
+  in_yellow "WARN: ${1}"
+}

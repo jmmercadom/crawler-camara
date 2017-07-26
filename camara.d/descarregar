@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-use 'descarregar'
-
 SUBCOMMAND_DESC="Descarregar html da camera de deputados"
 SUBCOMMAND_HELP=$(cat <<EOH
 remuneracoes_deputados        Descarregar remunerações deputados
@@ -24,6 +22,6 @@ case ${1} in
       exit
     fi
 
-    remuneracoes_deputados ${ano} ${mes}
+    descarregar/remuneracoes_deputados ${ano} ${mes}
   ;;
 esac

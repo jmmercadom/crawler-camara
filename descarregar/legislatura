@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+source camara.d/utils
+
+ano=${1}
+log "${0}: parametros [ano=${ano}]"
+
+path=/dados/legislaturas
+log "${0}: Criar folder ${path}"
+mkdir -p ${path}
+file=${ano}.json
+file_path=${path}/${file}
+
+endpoint="https://dadosabertos.camara.leg.br/api/v2/legislaturas"
+params="data=${ano}-01-01&ordem=ASC&ordenarPor=id"
+url="${endpoint}?${params}"
+headers="accept: application/json"
+
+log "${0}: Descarregar informação de legislaturas da camara [url=${url}] [headers=${headers}] [file_path=${file_path}]"
+curl --silent --fail ${url} --header "${headers}" | jq '.' > ${file_path}

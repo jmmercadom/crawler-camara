@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+source camara.d/utils
+
+ano=${1}
+mes=${2}
+
+log "${0}: parametros [ano=${ano}] [mes=${mes}]"
+export meses
+
+if [[ -z ${mes} ]]; then
+  meses=`seq 12`
+else
+  meses=`seq ${mes} ${mes}`
+fi
+
+for mes in ${meses}
+do
+  obter/nomes_deputados ${ano} | parallel ./descarregar/remuneracoes_deputado ${ano} ${mes} "{}"
+done
