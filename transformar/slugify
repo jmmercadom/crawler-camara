@@ -1,0 +1,7 @@
+#!/usr/bin/env python3
+
+import sys
+from slugify import slugify
+
+txt=sys.stdin.readline().strip()
+print(slugify(txt))

@@ -1,0 +1,29 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# Descrição:
+# Ler um archivo HTML (pesquisa de remunerações de um funcionarios) e extrai os
+# enlaces para cada remuneração do funcionario.
+# Entrada:
+# O conteudo do arquivo HTML
+# Saída:
+# Enlaces para cada remuneração (uma linha por cada enlace)
+
+from bs4 import BeautifulSoup
+import sys
+from unidecode import unidecode
+
+def normalize(string):
+    return str(
+        unidecode(string).encode('ascii'),
+        'utf-8'
+    )
+
+url_camara='http://www2.camara.leg.br'
+
+document = BeautifulSoup("".join(sys.stdin.readlines()), 'html.parser')
+nome = normalize(document.select_one('#nome').get('value'))
+links = document.select('#content > table > tbody > tr > td > a')
+for link in links:
+    if link.text == nome:
+        print("%s/transpnet/%s" % (url_camara, link.get('href')))

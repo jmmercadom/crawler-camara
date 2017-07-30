@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-source camara.d/utils
+source utils/terminal
 
 ano=${1}
 mes=${2}
-
 log "${0}: parametros [ano=${ano}] [mes=${mes}]"
+
 export meses
 
 if [[ -z ${mes} ]]; then
@@ -14,7 +14,11 @@ else
   meses=`seq ${mes} ${mes}`
 fi
 
+log "${0}: [meses=${meses}]"
+
 for mes in ${meses}
 do
-  obter/nomes_deputados ${ano} | parallel ./descarregar/remuneracoes_funcionario ${ano} ${mes} "{}"
+  log "${0}: descarregar remuneracoes deputados [ano=${ano}] [mes=${mes}]"
+  obter/nomes_deputados ${ano} | parallel -j ${JOBS} descarregar/remuneracoes_funcionario ${ano} ${mes} "{}"
+  log "${0}: remuneracoes deputados [ano=${ano}] [mes=${mes}] descarregadas"
 done

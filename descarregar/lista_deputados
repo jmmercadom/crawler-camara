@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+source utils/terminal
+
+set -e
+
+ano=${1}
+log "${0}: parametros [ano=${ano}]"
+
+rota=/dados/lista_deputados/${ano}
+
+if [ -n "$(ls -A ${rota})" ]; then
+  log "${0}: lista de deputados foram encontradas em ${rota}, não serão descarregadas"
+  exit
+else
+  log "${0}: lista de deputados não foram encontradas"
+fi
+
+log "${0}: Criar folder ${rota}"
+mkdir -p ${rota}
+
+legislatura=$(obter/legislatura_id ${ano})
+log "${0}: [legislatura=${legislatura}]"
+
+endpoint="https://dadosabertos.camara.leg.br/api/v2/deputados"
+headers="accept: application/json"
+
+pagina=1
+log "${0}: [pagina=${pagina}]"
+while :
+do
+  params="idLegislatura=${legislatura}&itens=100&ordem=ASC&ordenarPor=nome&pagina=${pagina}"
+  url="${endpoint}?${params}"
+  file=${pagina}.json
+  file_path=${rota}/${file}
+
+  log "${0}: descarregar informação deputados da camara [url=${url}] [headers=${headers}] [file_path=${file_path}]"
+  curl \
+    ${url} \
+    --silent \
+    --fail \
+    --header "${headers}" \
+    | jq '.' > ${file_path}
+  log "${0}: informação deputados da camara descarregados"
+
+  log "${0}: verificar se é a ultima pagina"
+  if [ "$(cat ${file_path} | jq '.links | map(select(.rel=="next"))')" == "[]" ]; then
+    log "${0}: ultima pagina da informação de deputados encontrada"
+    break
+  fi
+
+  (( pagina++ ))
+done

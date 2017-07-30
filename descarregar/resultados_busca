@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+# Descarregar os resultados da pesquisa do site da camara de deputados com as
+# remunerações do funcionario para um certo periodo.
+#
+# Entrada:
+# - periodo: Ano e mes pra presquisa. No formato: YYYYMM
+# - nome: Nome completo do funcionario, cercado de aspas duplas.
+#
+# Saída:
+# Resultado (HTML) da pesquisa
+
+source utils/terminal
+
+set -e
+
+periodo=${1}
+nome="${2}"
+log "${0}: parametros [periodo=${periodo}] [nome=${nome}]"
+
+url=http://www2.camara.leg.br/transpnet/consulta
+
+log "${0}: descarregar resultados busca [url=${url}] [nome='${nome}'] [periodoFolha=${periodo}]"
+curl \
+  ${url} \
+  --fail \
+  --silent \
+  --get \
+  --data-urlencode periodoFolha=${periodo} \
+  --data-urlencode nome="${nome}" \
+  -X POST
+log "${0}: resultados da busca descarregados"

@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+source utils/terminal
+
+set -e
+
+ano=${1}
+log "${0}: parametros [ano=${ano}]"
+
+descarregar/lista_deputados ${ano}
+
+rota=/dados/lista_deputados/${ano}
+log "${0}: obter ids da lista deputados ${rota}"
+find ${rota}/*.json -print0 | xargs -I {} cat {} | jq '.dados[].id'
+log "${0}: ids extraidos"

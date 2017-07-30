@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+source utils/terminal
+
+set -e
+
+id=${1}
+ano=${2}
+log "${0}: parametros [id=${id}] [ano=${ano}]"
+
+descarregar/deputado ${id}
+
+path=/dados/nomes_deputados
+log "${0}: Criar folder ${path}"
+mkdir -p ${path}
+
+nomeCivil=$(cat /dados/deputados/${id}.json | jq '.dados.nomeCivil')
+echo "${nomeCivil//\"}" >> ${path}/${ano}.txt

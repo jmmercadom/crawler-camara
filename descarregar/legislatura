@@ -1,20 +1,36 @@
 #!/usr/bin/env bash
 
-source camara.d/utils
+source utils/terminal
+
+set -e
 
 ano=${1}
 log "${0}: parametros [ano=${ano}]"
 
 path=/dados/legislaturas
-log "${0}: Criar folder ${path}"
-mkdir -p ${path}
 file=${ano}.json
 file_path=${path}/${file}
+
+if [ -f  ${file_path} ]; then
+  log "${0}: ${file_path} foi encontrado, não sera descarregado"
+  exit
+else
+  log "${0}: ${file_path} não foi encontrado"
+fi
+
+log "${0}: Criar folder ${path}"
+mkdir -p ${path}
 
 endpoint="https://dadosabertos.camara.leg.br/api/v2/legislaturas"
 params="data=${ano}-01-01&ordem=ASC&ordenarPor=id"
 url="${endpoint}?${params}"
 headers="accept: application/json"
 
-log "${0}: Descarregar informação de legislaturas da camara [url=${url}] [headers=${headers}] [file_path=${file_path}]"
-curl --silent --fail ${url} --header "${headers}" | jq '.' > ${file_path}
+log "${0}: descarregar informação de legislaturas da camara [url=${url}] [headers=${headers}] [file_path=${file_path}]"
+curl \
+  ${url} \
+  --silent \
+  --fail \
+  --header "${headers}" \
+  | jq '.' > ${file_path}
+log "${0}: informação de legislaturas da camara descarregados"

@@ -2,7 +2,7 @@
 
 # Descarregar as remuneracoes de um funcionario para um certo periodo.
 # Os arquivos HTML descarregados seram armazenados na pasta '/html'.
-# A jerarquia das pastas criadas são: /html/ANO/MES/NOME_NUM.html
+# A jerarquia das pastas criadas são: /html/ANO/MES/NOME/NUM.html
 # Onde ANO, MES, NOME são os parametros de entrada.
 # NUM é o numero de resultado de pesquisa, podem aparecer multiplas
 # remunerações para uma pessoa num periodo especifico.
@@ -15,37 +15,50 @@
 # Saída:
 # Nenhuma
 
-source camara.d/utils
+source utils/terminal
+source utils/text
 
 ano=${1}
 mes=${2}
-nome=${3}
-
+nome="${3}"
 log "${0}: parametros [ano=${ano}] [mes=${mes}] [nome=${nome}]"
+in_cyan "descarregando remunerações ${nome} ${ano}/${mes}..."; echo;
 
 log "${0}: convertindo mes para o formato MM"
 printf -v mes "%02d" ${mes}
 log "${0}: mes=${mes}"
 
+slug=$(slugify "${nome}")
+rota=/html/${ano}/${mes}/${slug}
+log "${0}: preparando jerarquia de pastas ${rota}"
+mkdir -p "${rota}"
+
+if [ -n "$(ls -A ${rota})" ]; then
+  log "${0}: remunerações foram encontradas em ${rota}, não serão descarregadas"
+  exit 0
+else
+  log "${0}: remunerações não foram encontradas"
+fi
+
 log "${0}: chamando script para resultados da busca"
-resultados=$(deputados/resultados_busca.sh ${ano}${mes} "${nome}")
+resultados=$(descarregar/resultados_busca ${ano}${mes} "${nome}")
 
 log "${0}: extraindo enlaces de remunerações dos resultados da busca"
-enlaces=($(echo ${resultados} | deputados/enlaces_remuneracoes.py))
+enlaces=$(echo ${resultados} | transformar/enlaces_remuneracoes)
 log "${0}: enlaces extraidos: ${enlaces}"
 
-rota="/dados/html/${ano}/${mes}"
-log "${0}: criando jerarquia de pastas ${rota}"
-mkdir -p ${rota}
-
 num=0
-for enlace in "${enlaces[@]}"
+for url in "${enlaces[@]}"
 do
-  log "${0}: descarregar remuneração ${num} para '${nome}' periodo ${ano}/${mes}"
-  curl
+  file_path=${rota}/${num}.html
+  log "${0}: descarregar remuneração [url=${url}] [file_path=${file_path}]"
+  curl \
+    "${url}" \
     --fail \
     --silent \
-    --output ${rota}/"${nome}"_${num}.html \
-    "${enlace}"
+    --output "${file_path}"
   ((num++))
+  log "${0}: remuneração descarregada"
 done
+
+in_green "descarregando remunerações ${nome} ${ano}/${mes} OK"; echo;

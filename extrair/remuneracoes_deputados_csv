@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+source utils/terminal
+source utils/text
+
+set -e
+
+ano=${1}
+mes=${2}
+log "${0}: parametros [ano=${ano}] [mes=${mes}]"
+
+rota=/csv/${ano}
+file_path=${rota}/${mes}.csv
+
+if [ -f  ${file_path} ]; then
+  log "${0}: remunerações foram encontradas em ${file_path}, não serão extraidas"
+  exit
+else
+  log "${0}: remunerações não foram encontradas"
+fi
+
+log "${0}: Criar folder ${rota}"
+mkdir -p ${rota}
+
+for file in /html/${ano}/${mes}/*/*.html
+do
+  log "${0}: extrair remunerações em csv [file=${file}] [file_path=${file_path}]"
+  cat ${file} | transformar/remuneracao_to_csv >> ${file_path}
+  log "${0}: remunerações extraidas em csv"
+done

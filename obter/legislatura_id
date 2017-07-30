@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+source utils/terminal
+
+set -e
+
+ano=${1}
+log "${0}: parametros [ano=${ano}]"
+
+descarregar/legislatura ${ano}
+
+rota=/dados/legislaturas
+file=${ano}.json
+file_path=${rota}/${file}
+
+log "${0}: retornando legislatura id para o ano ${ano}"
+cat ${file_path} | jq '.dados[0].id'

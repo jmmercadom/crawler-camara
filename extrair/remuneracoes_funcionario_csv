@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+source utils/terminal
+source utils/text
+
+set -e
+
+ano=${1}
+mes=${2}
+nome="${3}"
+log "${0}: parametros [ano=${ano}] [mes=${mes}] [nome=${nome}]"
+
+descarregar/remuneracoes_funcionario ${ano} ${mes} "${nome}"
+
+rota=/csv/${ano}
+file_path=${rota}/${mes}.csv
+
+log "${0}: Criar folder ${rota}"
+mkdir -p ${rota}
+
+slug=$(slugify "${nome}")
+log "${0}: extrair remuneração em csv [file_path=${file_path}]"
+find /html/${ano}/${mes}/${slug}/*.html -print0 | xargs -I {} sh -c 'cat {} | transformar/remuneracao_to_csv' >> ${file_path}
+log "${0}: remuneração extraida"

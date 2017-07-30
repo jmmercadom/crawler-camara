@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+function slugify() {
+  local txt=${1}
+  echo ${txt} | transformar/slugify
+}

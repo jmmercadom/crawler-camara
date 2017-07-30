@@ -1,23 +1,18 @@
 #!/usr/bin/env bash
 
-source camara.d/utils
+source utils/terminal
+
+set -e
 
 ano=${1}
 
 log "${0}: parametros [ano=${ano}]"
 
-path=/dados/deputados/nomes
+descarregar/nomes_deputados ${ano}
+
+path=/dados/nomes_deputados
 file=${ano}.txt
 file_path=${path}/${file}
 
-log "${0}: detectar se aquivo existe file_path=${file_path}]"
-if [ ! -f  ${file_path} ]; then
-  log "${0}: file_path não foi encontrado"
-  log "${0}: descarregando nomes deputados para o ano ${ano}"
-  descarregar/nomes_deputados ${ano}
-else
-  log "${0}: file_path foi encontrado"
-fi
-
 log "${0}: retornando nomes de deputados para o ano ${ano}"
-cat ${file_path}
+cat ${file_path} | sort

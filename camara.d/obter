@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+
+SUBCOMMAND_DESC="Obter informações dos dados descarregados"
+SUBCOMMAND_HELP=$(cat <<EOH
+legislatura_id                Id de uma legislatura
+lista_deputados_ids           Ids de deputados
+nomes_deputados               Nomes deputados
+EOH
+)
+
+case ${1} in
+  legislatura_id)
+    ano=${2}
+
+    if [[ -z ${ano} ]]; then
+      in_red ">"; echo "ano não especificado"
+      bold "Uso:"; echo "     ${MAIN_COMMAND} ${SUBCOMMAND} ${1} <ano>"
+      bold "Exemplo:"; echo " ${MAIN_COMMAND} ${SUBCOMMAND} ${1} 2017"
+      bold "$(smul Parametros)"; echo
+      bold "ano:"; echo "     ano no formato YYYY"
+      exit
+    fi
+
+    obter/legislatura_id ${ano}
+  ;;
+
+  lista_deputados_ids)
+    ano=${2}
+
+    if [[ -z ${ano} ]]; then
+      in_red ">"; echo "ano não especificado"
+      bold "Uso:"; echo "     ${MAIN_COMMAND} ${SUBCOMMAND} ${1} <ano>"
+      bold "Exemplo:"; echo " ${MAIN_COMMAND} ${SUBCOMMAND} ${1} 2017"
+      bold "$(smul Parametros)"; echo
+      bold "ano:"; echo "     ano no formato YYYY"
+      exit
+    fi
+
+    obter/lista_deputados_ids ${ano}
+  ;;
+
+  nomes_deputados)
+    ano=${2}
+
+    if [[ -z ${ano} ]]; then
+      in_red ">"; echo "ano não especificado"
+      bold "Uso:"; echo "     ${MAIN_COMMAND} ${SUBCOMMAND} ${1} <ano>"
+      bold "Exemplo:"; echo " ${MAIN_COMMAND} ${SUBCOMMAND} ${1} 2017"
+      bold "$(smul Parametros)"; echo
+      bold "ano:"; echo "     ano no formato YYYY"
+      exit
+    fi
+
+    obter/nomes_deputados ${ano}
+  ;;
+
+  *)
+    if [ ! -z ${1} ]
+    then
+      in_red "'${1}' not found"
+      _help
+    fi
+esac

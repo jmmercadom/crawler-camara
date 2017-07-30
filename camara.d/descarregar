@@ -2,15 +2,19 @@
 
 SUBCOMMAND_DESC="Descarregar html da camera de deputados"
 SUBCOMMAND_HELP=$(cat <<EOH
-remuneracoes_deputados        Descarregar remunerações de todos os deputados
-remuneracoes_fucionario       Descarregar remunerações de um funcionario especifico
+remuneracoes_deputados        Remunerações de todos os deputados
+remuneracoes_fucionario       Remunerações de um funcionario especifico
+nomes_deputados               Nomes de deputados
+deputado                      Informação de um deputado
+lista_deputados               Lista de todos os deputados
+legislatura                   Informações de uma legislatura
 EOH
 )
 
 case ${1} in
   remuneracoes_deputados)
-    ano="${2}"
-    mes="${3}"
+    ano=${2}
+    mes=${3}
 
     if [[ -z ${ano} ]]; then
       in_red ">"; echo "ano não especificado"
@@ -27,9 +31,9 @@ case ${1} in
   ;;
 
   remuneracoes_funcionario)
-    ano="${2}"
-    mes="${3}"
-    nome="${4}"
+    ano=${2}
+    mes=${3}
+    nome="${@:4}"
 
     if [[ -z ${ano} ]] || [[ -z ${mes} ]] || [[ -z ${nome} ]]; then
       in_red ">"; echo "ano, mes ou nome não especificados"
@@ -42,6 +46,73 @@ case ${1} in
       exit
     fi
 
-    descarregar/remuneracoes_funcionario ${ano} ${mes} ${nome}
+    descarregar/remuneracoes_funcionario ${ano} ${mes} "${nome}"
   ;;
+
+  nomes_deputados)
+    ano=${2}
+
+    if [[ -z ${ano} ]]; then
+      in_red ">"; echo "ano não especificado"
+      bold "Uso:"; echo "     ${MAIN_COMMAND} ${SUBCOMMAND} ${1} <ano>"
+      bold "Exemplo:"; echo " ${MAIN_COMMAND} ${SUBCOMMAND} ${1} 2017"
+      bold "$(smul Parametros)"; echo
+      bold "ano:"; echo "     ano no formato YYYY"
+      exit
+    fi
+
+    descarregar/nomes_deputados ${ano}
+  ;;
+
+  deputado)
+    id=${2}
+
+    if [[ -z ${id} ]]; then
+      in_red ">"; echo "id não especificado"
+      bold "Uso:"; echo "     ${MAIN_COMMAND} ${SUBCOMMAND} ${1} <id>"
+      bold "Exemplo:"; echo " ${MAIN_COMMAND} ${SUBCOMMAND} ${1} 123456"
+      bold "$(smul Parametros)"; echo
+      bold "id:"; echo "     identificador numérico do deputado"
+      exit
+    fi
+
+    descarregar/deputado ${id}
+  ;;
+
+  lista_deputados)
+    ano=${2}
+
+    if [[ -z ${ano} ]]; then
+      in_red ">"; echo "ano não especificado"
+      bold "Uso:"; echo "     ${MAIN_COMMAND} ${SUBCOMMAND} ${1} <ano>"
+      bold "Exemplo:"; echo " ${MAIN_COMMAND} ${SUBCOMMAND} ${1} 2017"
+      bold "$(smul Parametros)"; echo
+      bold "ano:"; echo "     ano no formato YYYY"
+      exit
+    fi
+
+    descarregar/lista_deputados ${ano}
+  ;;
+
+  legislatura)
+    ano=${2}
+
+    if [[ -z ${ano} ]]; then
+      in_red ">"; echo "ano não especificado"
+      bold "Uso:"; echo "     ${MAIN_COMMAND} ${SUBCOMMAND} ${1} <ano>"
+      bold "Exemplo:"; echo " ${MAIN_COMMAND} ${SUBCOMMAND} ${1} 2017"
+      bold "$(smul Parametros)"; echo
+      bold "ano:"; echo "     ano no formato YYYY"
+      exit
+    fi
+
+    descarregar/legislatura ${ano}
+  ;;
+
+  *)
+    if [ ! -z ${1} ]
+    then
+      in_red "'${1}' not found"
+      _help
+    fi
 esac

@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+SUBCOMMAND_DESC="Extrair informações dos dados descarregados"
+SUBCOMMAND_HELP=$(cat <<EOH
+remuneracoes_funcionario_csv             Extrair remunerações do funcionario como csv
+remuneracoes_csv                         Extrair remunerações dos deputados como csv
+EOH
+)
+
+case ${1} in
+  remuneracoes_funcionario_csv)
+    ano=${2}
+    mes=${3}
+    nome="${@:4}"
+
+    if [[ -z ${ano} ]] || [[ -z ${mes} ]] || [[ -z ${nome} ]]; then
+      in_red ">"; echo "ano, mes ou nome não especificados"
+      bold "Uso:"; echo "     ${MAIN_COMMAND} ${SUBCOMMAND} ${1} <ano> <mes> <nome>"
+      bold "Exemplo:"; echo " ${MAIN_COMMAND} ${SUBCOMMAND} ${1} 2000 12 \"ZE CARIOCA\""
+      bold "$(smul Parametros)"; echo
+      bold "ano:"; echo "     ano no formato YYYY"
+      bold "mes:"; echo "     mes no formato MM"
+      bold "nome:"; echo "    nome completo do funcionario, cercado de aspas duplas."
+      exit
+    fi
+
+    extrair/remuneracoes_funcionario_csv ${ano} ${mes} "${nome}"
+  ;;
+
+  remuneracoes_csv)
+    ano=${2}
+    mes=${3}
+
+    if [[ -z ${ano} ]] || [[ -z ${mes} ]]; then
+      in_red ">"; echo "ano, mes ou nome não especificados"
+      bold "Uso:"; echo "     ${MAIN_COMMAND} ${SUBCOMMAND} ${1} <ano> <mes>"
+      bold "Exemplo:"; echo " ${MAIN_COMMAND} ${SUBCOMMAND} ${1} 2000 12"
+      bold "$(smul Parametros)"; echo
+      bold "ano:"; echo "     ano no formato YYYY"
+      bold "mes:"; echo "     mes no formato MM"
+      exit
+    fi
+
+    extrair/remuneracoes_deputados_csv ${ano} ${mes}
+  ;;
+esac

@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+source utils/terminal
+
+set -e
+
+id=${1}
+log "${0}: parametros [id=${id}]"
+
+path=/dados/deputados
+file_path=${path}/${id}.json
+
+if [ -f  ${file_path} ]; then
+  log "${0}: ${file_path} foi encontrado, não sera descarregado"
+  exit
+else
+  log "${0}: ${file_path} não foi encontrado"
+fi
+
+log "${0}: Criar folder ${path}"
+mkdir -p ${path}
+
+endpoint="https://dadosabertos.camara.leg.br/api/v2/deputados"
+headers="accept: application/json"
+url=${endpoint}/${id}
+
+log "${0}: descarregar informação deputado [url=${url}] [headers=${headers}]"
+curl \
+  ${url} \
+  --silent \
+  --fail \
+  --header "${headers}" \
+  | jq '.' > ${file_path}
+log "${0}: informação deputado descarregada"
