@@ -28,3 +28,7 @@ deputados em CSV para o periodo Janeiro 2017 o comando seria o seguinte:
 Isso descarregara todos os dados da camara necessarios (lista de deputados, legislaturas) na pasta  `./dados `. 
 Os documentos html com a informação das remunerações estarão armazendas na pasta `./html`. E finalmente os dados CSV estarão
 armazendos na pasta `./csv`. A variavel de ambiente `CAMARA_DEBUG` esta sendo ativada para ter mais visibilidade dos logs que serão escritos durante a execução.
+
+# Interessado só nos dados?
+
+Se estiviver interessado so nos dados a gente ja tem os dados CSV no repositorio https://github.com/jmmercadom/dados-camara.
